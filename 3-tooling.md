@@ -125,7 +125,7 @@ Of course, from RDi, you can only compile sources from the IFS that have support
 
 ILEditor supports editing and compiling sources from the IFS. ILEditor is currently only available for Windows as it is built with .NET.
 
-![](https://camo.githubusercontent.com/34acbb0fbc6747d35a981946a92848e5f9f9ce7f/68747470733a2f2f692e696d6775722e636f6d2f4b6c31445149662e706e67)
+![](./images/ileditor.png)
 
 Like RDi, you can only compile sources from the IFS that have support for the SRCSTMF parameter. You can also setup the library list in the editor in the job settings window.
 
