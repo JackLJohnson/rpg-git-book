@@ -108,3 +108,31 @@ yum install git.ppc64
 ```
 
 After this, the `git` command will be available for your users to use.
+
+## Tools for editing streamfiles
+
+Of course, since all future development will take place in the IFS (that includes for RPG, COBOL, or any ILE language you use) you will need to use a sufficient editor. This section will cover different editors available for editing source code on the IFS.
+
+### Rational Developer for i
+
+Rational Developer for i (RDi) does have an IFS Browser where you can edit and compile ILE sources.
+
+!!IMAGE HERE!!
+
+Of course, from RDi, you can only compile sources from the IFS that have support for the SRCSTMF parameter. In RDi, like usual, you can setup your library list for the job that the source will compile under.
+
+### ILEditor
+
+ILEditor supports editing and compiling sources from the IFS. ILEditor is currently only available for Windows as it is built with .NET.
+
+![](https://camo.githubusercontent.com/34acbb0fbc6747d35a981946a92848e5f9f9ce7f/68747470733a2f2f692e696d6775722e636f6d2f4b6c31445149662e706e67)
+
+Like RDi, you can only compile sources from the IFS that have support for the SRCSTMF parameter. You can also setup the library list in the editor in the job settings window.
+
+### VSCode + SSH FS extension
+
+VSCode is such an amazing editor and we're lucky that there is extension called SSH FS (https://github.com/SchoofsKelvin/vscode-sshfs) which allows us to access files on a remote system - including IBM i, which is perfect for editing. Using this extension along the RPG extension for highlighting (created by Niels Liisberg), it's not too bad.
+
+![](./images/vscode-sshfs.png)
+
+The true down side to using VSCode right now is that there is no inline compiling support. Of course you can save your file, then compile from the command line still.
