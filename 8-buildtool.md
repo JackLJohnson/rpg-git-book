@@ -285,3 +285,59 @@ tests: program1.rpgle program2.rpgle
 	system "CRTRPGMOD MODULE($(BIN_LIB)/$*) SRCSTMF('./qrpglesrc/$*.rpgle') DBGVIEW(*SOURCE)"
 	system "CRTPGM PGM($(BIN_LIB)/$*) BNDDIR($(BIN_LIB)/A_BNDDIR)"
 ```
+
+## Handling table changes
+
+Db2 for i provides the `ON REPLACE` syntax, which allows for table columns to be updated without the loss of data and without maintaining alter statements.
+
+Further information:
+
+* Intro to `CREATE OR REPLACE`: https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_73/sqlp/rbafyreplacetable.htm
+* Enhancement announcement (contains PTF information): https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM%20i%20Technology%20Updates/page/Create%20OR%20REPLACE%20Table
+
+### Using `CREATE OR REPLACE`
+
+**This example comes from the Intro to `CREATE OR REPLACE` on the IBM Knowledge Center website.**
+
+Using `CREATE OR REPLACE TABLE` lets you consolidate the master definition of a table into one statement. You do not need to maintain the source for the original `CREATE TABLE` statement plus a complex list of `ALTER TABLE` statements needed to recreate the most current version of a table. This `CREATE TABLE` statement can be executed to deploy the current definition of the table either as a new table or to replace a prior version of the table. There are options to either keep the existing data in the table or to clear the data from the table during the replace. The default is to keep all data. If you elect to clear all the data, your new table definition does not need to be compatible with the original version.
+
+**In all cases**, other objects that depend on the table, such as referential constraints, triggers, and views, must remain satisfied **or the replace will fail**.
+
+Suppose your original table was this basic INVENTORY table in an initial build.
+
+```sql
+CREATE TABLE BIN_LIB/INVENTORY 
+  (PARTNO   SMALLINT NOT NULL,
+  DESCR    VARCHAR(24),
+  QONHAND  INT,
+  PRIMARY KEY(PARTNO))
+```
+
+Perhaps over time, you have updated the column names to be more descriptive, changed the `DESCR` column to be a longer Unicode column, and added a timestamp column for when the row was last updated. The following statement reflects all of these changes and can be executed against any prior version of the table, as long as the column names can be matched to the prior column names and the data types are compatible.
+
+Also consider that if you commit this, barryci might trigger a build, your build system (e.g. GNU Make) will run the statement, update the table and retain the data.
+
+```sql
+CREATE OR REPLACE TABLE BIN_LIB/INVENTORY 
+  (PART_NUMBER FOR PARTNO        SMALLINT NOT NULL,
+  DESCRIPTION FOR DESCR         VARGRAPHIC(500) CCSID 1200,
+  QUANTITY_ON_HAND FOR QONHAND  INT,
+  LAST_MODIFIED FOR MODIFIED    TIMESTAMP
+        NOT NULL GENERATED ALWAYS FOR EACH ROW ON UPDATE AS ROW CHANGE TIMESTAMP,
+  PRIMARY KEY(PARTNO))
+```
+
+### Execute SQL statements in GNU Make
+
+This is an example `makefile` which could implement this. We must replace a library variable with the library we are going to build in. We do this using `sed`.
+
+```makefile
+BIN_LIB=DBTEST
+all: inventory.sql
+
+%.sql:
+	sed -i.bak "s/BIN_LIB/$(BIN_LIB)/g" ./$*.sql
+	system "RUNSQLSTM SRCSTMF('./$*.sql') COMMIT(*NONE)"
+```
+
+If you do not provide a library/schema when using `CREATE OR REPLACE`, it will use users current library - or QGPL if the current library is not set.
