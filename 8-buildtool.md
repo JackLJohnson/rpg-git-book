@@ -297,7 +297,7 @@ Further information:
 
 ### Using `CREATE OR REPLACE`
 
-**This example comes from the Intro to `CREATE OR REPLACE` on the IBM Knowledge Center website.**
+*This example comes from the Intro to `CREATE OR REPLACE` on the IBM Knowledge Center website.*
 
 Using `CREATE OR REPLACE TABLE` lets you consolidate the master definition of a table into one statement. You do not need to maintain the source for the original `CREATE TABLE` statement plus a complex list of `ALTER TABLE` statements needed to recreate the most current version of a table. This `CREATE TABLE` statement can be executed to deploy the current definition of the table either as a new table or to replace a prior version of the table. There are options to either keep the existing data in the table or to clear the data from the table during the replace. The default is to keep all data. If you elect to clear all the data, your new table definition does not need to be compatible with the original version.
 
