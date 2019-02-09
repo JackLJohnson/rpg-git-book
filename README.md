@@ -19,7 +19,7 @@ A book for IBM i, RPG and git
    * Perhaps add something which compares GitHub, BitBucket and GitLab
 7. **Starting the migration**
 8. **Adding a build tool**
-9. **Taking another look at distrubuted**
+9. **Workflow overview**
 10. **Deployment** 
     * Not written
     * Will cover building save files with make, manual deployment with 'pull & rebuild', introduction to Jenkins and barryCI
