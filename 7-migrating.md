@@ -49,7 +49,7 @@ Make sure that when you migrate code, you are migrating code into a directory wh
 1. You will lose the TEXT column that source members have, which is usually used for describing what the source is. Although, you can still put that in the program as a comment.
 2. The type of the source member becomes the extension when in the IFS.
 3. Files and directories of sources are usually stored as all lowercase.
-4. It is recommend you retain the 10 character limit on programs, commands, modules, etc - any source related to Db2 for i doesn't matter as much as Db2 for i and most ILE languages support 'long names'
+4. It is recommended you retain the 10 character limit on programs, commands, modules, etc - any source related to Db2 for i doesn't matter as much as Db2 for i and most ILE languages support 'long names'
 5. Sources on the IFS should be stored as encoding 1208 (UTF-8).
 
 ## Tools used for migration
@@ -82,10 +82,9 @@ Building this solution will create the `MIGRATE` library and inside is the `MIGS
 
 ![](./images/migsrcpf.PNG)
 
-If we had a library with source physical files and wanted to migrate them into a new project directory, we would have to run the command once to migrate the source physical file. It will copy the source member into the IFS as a 1208 (UTF-8) streamfile. If the file or folder it tries to create already exists, it will fail.
+If we had a library with source physical files and wanted to migrate them into a new project directory, we would have to run the command once to migrate the source physical file. It will copy the source member into the IFS as a 1208 (UTF-8) streamfile. If the file or folder it tries to create already exists, it will fail. In the last chapter, we created `/home/BARRY/myproject` as a git repository.
 
 ```
-MKDIR DIR('/home/BARRY/myproj')
 MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QRPGLESRC) OUTDIR('/home/BARRY/myproject')
 MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QRPGLEREF) OUTDIR('/home/BARRY/myproject')
 MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QCLLESRC)  OUTDIR('/home/BARRY/myproject')
@@ -108,7 +107,7 @@ This would create three directories in `/home/BARRY/myproject` like the followin
         /pgm3.clle
 ```
 
-Note that it will create all directories and files with lowercase names.
+Note that it will create all directories and stream files with lowercase names.
 
 ### Other possible ways.
 
