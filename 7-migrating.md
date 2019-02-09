@@ -42,6 +42,8 @@ Where the resulting layout in the IFS could be very similar:
       startjob.cmd
 ```
 
+Make sure that when you migrate code, you are migrating code into a directory which is a local repository (e.g. you cloned it) so you can commit & push changes as you make them. For example, make your first commit when you've migrated the code and then make another (or multiple) after you fix up the 'copybooks'.
+
 **Notes about migrating to the IFS**:
 
 1. You will lose the TEXT column that source members have, which is usually used for describing what the source is. Although, you can still put that in the program as a comment.
@@ -59,7 +61,7 @@ Initially migrating the source code can be the hardest part of the entire proces
 All a migration consists of is moving source members to the IFS. To our benefit, the `CPYTOSTMF` command exists, which can be used to copy a source member to a stream file. For example:
 
 ```
-CPYTOSTMF FROMMBR('/QSYS.lib/DEVLIB.lib/QRPGLESRC.file/PROGRAMA.mbr') TOSTMF('/home/barry/project/qrpglesrc/programa.rpgle') STMFOPT(*REPLACE) STMFCCSID(1208)
+CPYTOSTMF FROMMBR('/QSYS.lib/DEVLIB.lib/QRPGLESRC.file/PROGRAMA.mbr') TOSTMF('/home/barry/myproject/qrpglesrc/programa.rpgle') STMFOPT(*REPLACE) STMFCCSID(1208)
 ```
 
 On the basis of this command, you would have to run this command for each source member you want to migrate.
@@ -84,17 +86,17 @@ If we had a library with source physical files and wanted to migrate them into a
 
 ```
 MKDIR DIR('/home/BARRY/myproj')
-MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QRPGLESRC) OUTDIR('/home/BARRY/myproj')
-MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QRPGLEREF) OUTDIR('/home/BARRY/myproj')
-MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QCLLESRC)  OUTDIR('/home/BARRY/myproj')
+MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QRPGLESRC) OUTDIR('/home/BARRY/myproject')
+MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QRPGLEREF) OUTDIR('/home/BARRY/myproject')
+MIGSRCPF LIBRARY(TESTPROJ) SOURCEPF(QCLLESRC)  OUTDIR('/home/BARRY/myproject')
 ```
 
-This would create three directories in `/home/BARRY/myproj` like the following:
+This would create three directories in `/home/BARRY/myproject` like the following:
 
 ```
 /home
   /BARRY
-    /myproj
+    /myproject
       /qrpglesrc
         /somesource.rpgle
         /somesource.rpgle
@@ -111,6 +113,18 @@ Note that it will create all directories and files with lowercase names.
 ### Other possible ways.
 
 You could potentially create an iProject in RDi based on a library and then have a local copy of all the source (which you can then put into a git repository later). You can also use the SPF Clone tool in ILEditor to clone a libraries source members on to your local machine (which can also be put into a git repository later).
+
+### Don't forget to commit changes
+
+Make sure, when you've finished migrating source code into your local developer repository. For example:
+
+```
+git add --all
+git commit -m "Initial migration step"
+git push
+```
+
+You will want to do this again (maybe multiple times) as you change the copybooks too.
 
 ## Handling 'copybooks' (`/COPY` & `/INCLUDE`)
 
