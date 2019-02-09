@@ -154,3 +154,31 @@ If you are using a 3rd party tool, like the HTTPAPI, which as it's headers in so
       /COPY `./qrplgeref/members.rpgle`
       /COPY QRPGLEREF,HTTPAPI_H
 ```
+
+## Compiling IFS sources
+
+You are able to compile most sources out of the IFS using your IDE or by the command line.
+
+### Compilers and stream file support
+
+The following list of commands/compilers have support for compiling sources out of the IFS on IBM i with the `SRCSTMF` parameter:
+
+* `CRTBNDRPG` / `CRTRPGMOD`
+* `CRTSQLRPGI`
+* `CRTSRVPGM` (for binder source) - 7.2+
+* `CRTBNDCL` / `CRTCLMOD` - 7.3+
+* `RUNSQLSTM`
+* `CRTBNDC` / `CRTCMOD`
+* `CRTBNDCBL` / `CRTCBLMOD`
+
+When you invoke the compile commands, whether from a 5250 shell, pase shell or IDE, make sure you set the jobs current working directory to the root/directory of the project you're working with to make sure the sources `/INCLUDE` and `/COPY` statements work as intended (as shown in the chapter about copybooks).
+
+## Compiling non-IFS sources
+
+For compilers like `CRTBNDCL` or `CRTCMD` (or any without the `SRCSTMF` parameter), in the case that a business has not updated the 7.3 yet, to compile the source the developer would have to create a temporary source member in the same library they are building the object in (which should be their own developer library) and then compile that source member. For example:
+
+```
+CRTSRCPF FILE(BARRYDEV/QCMDSRC) RCDLEN(112)
+CPYFRMSTMF FROMSTMF('./qcmdsrc/mycmd.cmd') TOMBR('/QSYS.lib/BARRYDEV.lib/QCMDSRC.file/mycmd.mbr') MBROPT(*REPLACE)
+CRTCMD CMD(BARRYDEV/MYCMD) PGM(BARRYDEV/MYCMD) SRCFILE(BARRYDEV/QCMDSRC)
+```
