@@ -78,7 +78,7 @@ gmake
 
 Building this solution will create the `MIGRATE` library and inside is the `MIGSRCPF` command. `MIGSRCPF` has three simple parameters.
 
-![](./images/migsrcpf.png)
+![](./images/migsrcpf.PNG)
 
 If we had a library with source physical files and wanted to migrate them into a new project directory, we would have to run the command once to migrate the source physical file. It will copy the source member into the IFS as a 1208 (UTF-8) streamfile. If the file or folder it tries to create already exists, it will fail.
 
