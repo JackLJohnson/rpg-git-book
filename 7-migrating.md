@@ -61,3 +61,5 @@ All a migration consists of is moving source members to the IFS. To our benefit,
 ```
 CPYTOSTMF FROMMBR('/QSYS.lib/DEVLIB.lib/QRPGLESRC.file/PROGRAMA.mbr') TOSTMF('/home/barry/project/qrpglesrc/programa.rpgle') STMFOPT(*REPLACE) STMFCCSID(1208)
 ```
+
+On the basis of this command, you would have to run this command for each source member you want to migrate.
