@@ -111,3 +111,46 @@ Note that it will create all directories and files with lowercase names.
 ### Other possible ways.
 
 You could potentially create an iProject in RDi based on a library and then have a local copy of all the source (which you can then put into a git repository later). You can also use the SPF Clone tool in ILEditor to clone a libraries source members on to your local machine (which can also be put into a git repository later).
+
+## Handling 'copybooks' (`/COPY` & `/INCLUDE`)
+
+Once the source has been migrated, another tedious task is changing all the copy books to point to your newly migrated stream files. We're lucky that the C, RPG and COBOL compilers for IBM i all support bringing includes in from the IFS. In this chapter, we will use RPG as it's the primary target audience for this book.
+
+Let's say we have a program that has `/COPY` (or `/INCLUDE`) statements like the following at the top of the source:
+
+```
+
+      /COPY QRPGLEREF,OBJECTS
+      /COPY QRPGLEREF,OBJECT
+      /COPY QRPGLEREF,FORMATS
+      /COPY QRPGLEREF,MEMBERS
+
+      ** --------------------------
+
+     D testproj        PI
+     D    pLibrary                   10A   Const
+
+      ** --------------------------
+      
+```
+
+Even though this source might be in the IFS, `/COPY` (or `/INCLUDE`) can still bring in source from source members in the QSYS file system (and vice versa). What the developer should do is change the statements to use a relative path based on the root of the project to the respective streamfile on the IFS. For example `/COPY QRPGLEREF,OBJECTS` might translate to `/COPY './qrpgleref/objects.rpgle'`.
+
+```
+      /COPY `./qrplgeref/objects.rpgle`
+      /COPY `./qrplgeref/object.rpgle`
+      /COPY `./qrplgeref/formats.rpgle`
+      /COPY `./qrplgeref/members.rpgle`
+```
+
+The reason you use a path relative to the root of the project is so we can build from the root of the project within our command line, IDE or our build system (which you will see later). It's not required that you do this to all your source at once, because you can still depend on the existing source members during a migration period - although **it is recommended you change them as soon as possible**. While it's not recommend, you can do it iteratively and change them when you work on the source. This is dangerous because the source members aren't under change control.
+
+If you are using a 3rd party tool, like the HTTPAPI, which as it's headers in source members, then you can leave those `/COPY` (or `/INCLUDE`) statements along side your includes which point to the IFS:
+
+```
+      /COPY `./qrplgeref/objects.rpgle`
+      /COPY `./qrplgeref/object.rpgle`
+      /COPY `./qrplgeref/formats.rpgle`
+      /COPY `./qrplgeref/members.rpgle`
+      /COPY QRPGLEREF,HTTPAPI_H
+```
