@@ -99,15 +99,15 @@ When you install packages, only one user needs to install it as the `/QOpenSys/p
 * List available packages: `yum list available`
 * List all packages: `yum list all`
 
-## Installing git
+### Installing other tools
 
-To install git, we must use the `yum` command once you have it setup.
+To install git and GNU Make, we must use the `yum` command once you have it setup.
 
 ```
-yum install git.ppc64
+yum install git.ppc64 make-gnu.ppc64
 ```
 
-After this, the `git` command will be available for your users to use.
+After this, the `git` and `gmake` command will be available for your users to use.
 
 ## Tools for editing streamfiles
 
