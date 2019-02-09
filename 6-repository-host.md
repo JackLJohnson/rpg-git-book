@@ -32,6 +32,8 @@ Choosing one of those solutions generally comes down to a number of things:
 * How easy their UI to use
 * Which one has extra features (like issues) which might be useful to your business
 
+### For this book
+
 This book will mostly focus on GitHub as the solution of choice. This is because:
 
 1. A very simplistic UI for the developers (for things like searching for code)
