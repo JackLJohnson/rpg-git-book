@@ -187,4 +187,4 @@ This book will cover building things like data areas, tables and message files i
 
 ## Why iProjects is not used
 
-iProjects has the issue of adding more over ahead than it needs to. When you use an iProject, you are actually editing source locally and when the source is saved it is uploaded to a mapped source member on IBM i.
+iProjects has the issue of adding more over ahead than it needs to. When you use an iProject, you are actually editing source locally and when the source is saved it is uploaded to a mapped source member on IBM i (where the compile happens). It makes more sense to have the currnet source code (and user repository) on the server, where the compiles happen, instead of working locally, mapping to a source member and then compiling.
