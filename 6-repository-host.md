@@ -17,7 +17,14 @@ For each project, or application you have, you should create a bare repo for. Th
 1. `cd /` - change working directory to the root
 2. `git init --bare myproject` - this will create `/myproject` as an empty repository.
 
-Developers can then use `git clone /myproject` to clone it. If developers want to clone it on to their local machine, or in fact want to clone it onto another IBM i, they can do it with SSH: `git clone barry@devibmi:/myproject`.
+Developers can now clone this repository by using the following commands:
+
+```
+cd $HOME
+git clone /myproject
+```
+
+This would create `/home/BARRY/myproject`. If developers want to clone it on to their local machine, or in fact want to clone it onto another IBM i, they can do it with SSH: `git clone barry@devibmi:/myproject`.
 
 ## Cloud hosted
 
