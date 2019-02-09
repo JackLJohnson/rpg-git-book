@@ -157,11 +157,7 @@ If you are using a 3rd party tool, like the HTTPAPI, which as it's headers in so
 
 ## Compiling IFS sources
 
-You are able to compile most sources out of the IFS using your IDE or by the command line.
-
-### Compilers and stream file support
-
-The following list of commands/compilers have support for compiling sources out of the IFS on IBM i with the `SRCSTMF` parameter:
+You are able to compile most sources out of the IFS using your IDE or by the command line. The following list of commands/compilers have support for compiling sources out of the IFS on IBM i with the `SRCSTMF` parameter:
 
 * `CRTBNDRPG` / `CRTRPGMOD`
 * `CRTSQLRPGI`
@@ -173,6 +169,8 @@ The following list of commands/compilers have support for compiling sources out 
 
 When you invoke the compile commands, whether from a 5250 shell, pase shell or IDE, make sure you set the jobs current working directory to the root/directory of the project you're working with to make sure the sources `/INCLUDE` and `/COPY` statements work as intended (as shown in the chapter about copybooks).
 
+You can change your working directory in a 5250 job using either `CD` or `CHGCURDIR`. You can also change your working directory in RDi and ILEditor when compiling sources. When working in pase, you can use `cd` to change working directory.
+
 ## Compiling non-IFS sources
 
 For compilers like `CRTBNDCL` or `CRTCMD` (or any without the `SRCSTMF` parameter), in the case that a business has not updated the 7.3 yet, to compile the source the developer would have to create a temporary source member in the same library they are building the object in (which should be their own developer library) and then compile that source member. For example:
@@ -182,3 +180,11 @@ CRTSRCPF FILE(BARRYDEV/QCMDSRC) RCDLEN(112)
 CPYFRMSTMF FROMSTMF('./qcmdsrc/mycmd.cmd') TOMBR('/QSYS.lib/BARRYDEV.lib/QCMDSRC.file/mycmd.mbr') MBROPT(*REPLACE)
 CRTCMD CMD(BARRYDEV/MYCMD) PGM(BARRYDEV/MYCMD) SRCFILE(BARRYDEV/QCMDSRC)
 ```
+
+This process can also be automated tool called CRTFRMSTMF, which was created by Brian Garland. It adds the `CRTFRMSTMF` command, which automated the previous three commands into one command: `CRTFRMSTMF`. You can find that tool here: https://bitbucket.org/BrianGarland/crtfrmstmf
+
+This book will cover building things like data areas, tables and message files in another chapter.
+
+## Why iProjects is not used
+
+iProjects has the issue of adding more over ahead than it needs to. When you use an iProject, you are actually editing source locally and when the source is saved it is uploaded to a mapped source member on IBM i.
