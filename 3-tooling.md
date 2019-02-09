@@ -117,7 +117,7 @@ Of course, since all future development will take place in the IFS (that include
 
 Rational Developer for i (RDi) does have an IFS Browser where you can edit and compile ILE sources.
 
-!!IMAGE HERE!!
+![](./images/rdi.png)
 
 Of course, from RDi, you can only compile sources from the IFS that have support for the SRCSTMF parameter. In RDi, like usual, you can setup your library list for the job that the source will compile under.
 
