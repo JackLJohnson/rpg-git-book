@@ -20,8 +20,6 @@ A book for IBM i, RPG and git
 7. **Starting the migration**
 8. **Adding a build tool**
 9. **Taking another look at distrubuted**
-   * Not written
-   * Will cover the distrubuted modal working with dev libraries, master library and library lists, etc
 10. **Deployment** 
     * Not written
     * Will cover building save files with make, manual deployment with 'pull & rebuild', introduction to Jenkins and barryCI
