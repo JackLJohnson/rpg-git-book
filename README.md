@@ -17,7 +17,7 @@ A book for IBM i, RPG and git
    * Perhaps written by someone else?
 6. [**Repository hosting**](./6-repository-host)
    * Perhaps add something which compares GitHub, BitBucket and GitLab
-7. [**Starting the migration**](./7-migration)
+7. [**Starting the migration**](./7-migrating)
 8. [**Adding a build tool**](./8-buildtool)
 9. [**Workflow overview**](./9-workflow)
 10. [**Deployment**](./10-deployment)
