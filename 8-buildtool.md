@@ -204,3 +204,84 @@ system -q "ADDBNDDIRE BNDDIR(MYLIBRARY/tools) OBJ((*LIBL/apipkg *SRVPGM *IMMED) 
 ```
 
 As you can see, it doesn’t really do anything with the .entry rule, because really we just need the values for the .bnddir rule.
+
+## Building objects that have no source
+
+Objects like message files and data areas don't have source. This can be a true challange when replicating your environment on other systems. Sadly, there is nothing built into IBM i which allows you to create a data area or message file from source - but of course, you could use a CL to execute the command. That means, if you can use a CL to build them, you can use a `makefile` too!
+
+In your `makefile`, you would hard-define the message files and data areas rules and then include them as a dependancy for what is needed. For example:
+
+```makefile
+BIN_LIB=IUNIT
+
+all: $(BIN_LIB).lib UTEMSG.msgf VERSION.dtaara PASSWORD.dtaara
+	@echo "Built all!"
+
+UTEMSG.msgf:
+	system "CRTMSGF MSGF($(BIN_LIB)/UTEMSG)"
+	system "ADDMSGD MSGID(UTE0001) MSGF($(BIN_LIB)/UTEMSG) MSG('&1') SECLVL('&N Cause . . . . . :   The unit test program reported the following non critical message. &N Recovery. . . . :   None needed') FMT((*CHAR 120)) CCSID(*JOB)"
+	system "ADDMSGD MSGID(UTE0002) MSGF($(BIN_LIB)/UTEMSG) MSG('&1') SECLVL('&n Cause . . . . . :   The unit test program reported the following critical error. & N Recovery. . . . :   See the lower level messages for details') SEV(40) FMT((*CHAR 120)) CCSID(*JOB)"
+	system "ADDMSGD MSGID(UTE0003) MSGF($(BIN_LIB)/UTEMSG) MSG('-------------- Starting Unit &1 --------------') FMT((*CHAR 32)) CCSID(*JOB)"
+	system "ADDMSGD MSGID(UTE5000) MSGF($(BIN_LIB)/UTEMSG) MSG('Start of User Messages') SECLVL('All user messages are UTE5001 and higher') CCSID(*JOB)"
+
+VERSION.dtaara:
+	system "CRTDTAARA DTAARA($(BIN_LIB)/VERSION) TYPE(*CHAR) LEN(25) VALUE('0.1.0.201901070019') TEXT('0.1.0.201901070019')"
+    
+PASSWORD.dtaara:
+	system "CRTDTAARA DTAARA($(BIN_LIB)/PASSWORD) TYPE(*CHAR) LEN(25) VALUE('BADPASSWORD') TEXT('Password dataarea')"
+
+%.lib:
+	-system -qi "CRTLIB $* TYPE(*TEST)"
+	-system -qi "CRTSRCPF FILE($(BIN_LIB)/QCLLESRC) RCDLEN(240)"
+	-system -qi "CRTSRCPF FILE($(BIN_LIB)/QCMDSRC) RCDLEN(240)"
+```
+
+## Handling library lists in GNU Make
+
+### User profile job description
+
+When using the `system` command in a `makefile`, the default library list is whatever is setup for the user profile. This may be a job description which is setup on the user profile.
+
+To accomplish a change to the library list for each build, you may create a new job description in the build (`CRTJOBD`) with an initial library list, and then change the user profile to use that new job description (`CHGUSRPRF`).
+
+This is not viable because it will affect any currently running build.
+
+### Using `QSHELL` in make
+
+In GNU Make, you can specify a shell using the `SHELL` variable. It is possible for us to define QSH/QSHELL as our shell for the commands to run in. This would allow us to run multiple commands in a single job.
+
+QSHELL contains the `liblist` command, which allows us to alter the library list for that job. This might be required when working with programs or sources that define tables/files.
+
+```makefile
+BIN_LIB=PRODDEVLIB
+LIBLIST=$(BIN_LIB) TABLES_LIB
+SHELL=/QOpenSys/usr/bin/qsh
+
+all: myprograma.rpgle myprogramb.rpgle
+
+%.rpgle:
+	liblist -a $(LIBLIST);\
+	system "CRTBNDRPG PGM($(BIN_LIB)/$*) SRCSTMF('./QRPGLESRC/$*.rpgle')";
+```
+
+This `makefile` would run the `liblist` and `system` command in the same job.
+
+* Read more about the GNU Make `SHELL` variable here: https://www.gnu.org/software/make/manual/html_node/Choosing-the-Shell.html
+* Read more about the `liblist` command here: https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_71/rzahz/rzahzliblist.htm
+
+### Statically binding (where possible)
+
+When using `CRTPGM` and `CRTSRVPGM` you can statically bind modules, service programs and binding directories.
+
+You can do this within a `makefile`.
+
+```makefile
+BIN_LIB=PRODDEVLIB
+
+tests: program1.rpgle program2.rpgle
+	@echo "Programs build!"
+
+%.rpgle:
+	system "CRTRPGMOD MODULE($(BIN_LIB)/$*) SRCSTMF('./qrpglesrc/$*.rpgle') DBGVIEW(*SOURCE)"
+	system "CRTPGM PGM($(BIN_LIB)/$*) BNDDIR($(BIN_LIB)/A_BNDDIR)"
+```
