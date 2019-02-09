@@ -14,7 +14,7 @@ Some examples of the command are as follows (direct from the IBM documentation s
 
 For more, you can visit the IBM documentation on the `system` command: https://www.ibm.com/support/knowledgecenter/en/ssw_ibm_i_73/rzahz/rzahzsystem.htm
 
-## Creating a makefile for ILE projects (part 1)
+## Creating a makefile for ILE projects - Simple programs
 
 ### Knowing your dependancies
 
@@ -48,7 +48,7 @@ From your source tree, you should determine what the objects you want to build a
 
 From this list, you should get the impression that we build all sources into modules and then into their retrospective program objects.
 
-### Creating your first rules
+### Creating your rules
 
 This information (knowing your dependancies) will allow us to create conditions (in our makefile) based on our program dependancies. First of all, we need to setup rules for what to do for each type of source we have.
 
@@ -111,4 +111,96 @@ From there, developers can call make with or without optional parameters:
 * `make stringlib.c` will only build `stringlib.c`
 * `make BIN_LIB=DEVLIB` will `make all`, but with the `BIN_LIB` variable as `DEVLIB`.
 
-## Creating a makefile for ILE projects (part 2)
+If you run `gmake -n` against this `makefile`, you can see the commands it would run.
+
+```
+barry$ make -n
+
+system "CRTRPGMOD MODULE(MYLIBRARY/programa) SRCSTMF('./src/programa.rpgle') DBGVIEW(*ALL) REPLACE(*YES)"
+system "CRTCMOD MODULE(MYLIBRARY/stringlib) SRCSTMF('./src/stringlib.c') DBGVIEW(*ALL) REPLACE(*YES)"
+system "CRTPGM PGM(MYLIBRARY/programa) MODULE(MYLIBRARY/programa MYLIBRARY/stringlib) ENTMOD(programa) REPLACE(*YES)"
+system "CRTRPGMOD MODULE(MYLIBRARY/programb) SRCSTMF('./src/programb.rpgle') DBGVIEW(*ALL) REPLACE(*YES)"
+system "CRTPGM PGM(MYLIBRARY/programb) MODULE(MYLIBRARY/programb) ENTMOD(programb) REPLACE(*YES)"
+system "CRTRPGMOD MODULE(MYLIBRARY/programc) SRCSTMF('./src/programc.rpgle') DBGVIEW(*ALL) REPLACE(*YES)"
+system "CRTPGM PGM(MYLIBRARY/programc) MODULE(MYLIBRARY/programc MYLIBRARY/stringlib) ENTMOD(programc) REPLACE(*YES)"
+# Can't compile CL from all OS versions..
+system -q "CRTSRCPF FILE(MYLIBRARY/QSRC) RCDLEN(112)"
+system "CPYFRMSTMF FROMSTMF('./src/thecl.clle') TOMBR('/QSYS.lib/MYLIBRARY.lib/QSRC.file/thecl.mbr') MBROPT(*replace)"
+system "CRTCLMOD MODULE(MYLIBRARY/thecl) SRCFILE(MYLIBRARY/QSRC) DBGVIEW(*ALL)"
+system "CRTPGM PGM(MYLIBRARY/thecl) MODULE(MYLIBRARY/thecl) ENTMOD(thecl) REPLACE(*YES)"
+echo "Build finished!"
+```
+
+As a cool side note: even though we defined `stringlib.c` as a dependancy for two programs, it only built once.
+
+## Creating a makefile for ILE projects - Service programs and binding directories
+
+Service programs are made up of three important things:
+
+* The module (or modules)
+* The binder source
+* The binding directory entry.
+
+### Creating your rules
+
+Let’s go ahead and create rules for creating the `.srvpgm` object, `.rpgle` module and `.bnddir` entry.
+
+```makefile
+%.rpgle:
+    system "CRTRPGMOD MODULE($(BIN_LIB)/$*) SRCSTMF('./src/$*.rpgle') DBGVIEW($(DBGVIEW)) REPLACE(*YES)"
+
+%.srvpgm:
+    # We need the binder source as a member! SRCSTMF on CRTSRVPGM not available on all releases.
+    -system -q "CRTSRCPF FILE($(BIN_LIB)/QSRC) RCDLEN(112)"
+    system "CPYFRMSTMF FROMSTMF('./src/$*.binder') TOMBR('/QSYS.lib/$(BIN_LIB).lib/QSRC.file/$*.mbr') MBROPT(*replace)"
+
+    system "CRTSRVPGM SRVPGM($(BIN_LIB)/$*) MODULE($(patsubst %,$(BIN_LIB)/%,$(basename $^))) SRCFILE($(BIN_LIB)/QSRC)"
+
+%.bnddir:
+    -system -q "CRTBNDDIR BNDDIR($(BIN_LIB)/$*)"
+    -system -q "ADDBNDDIRE BNDDIR($(BIN_LIB)/$*) OBJ($(patsubst %.entry,(*LIBL/% *SRVPGM *IMMED),$^))"
+
+%.entry:
+    # Basically do nothing..
+    @echo ""
+```
+
+### Dependancy list
+
+Next, we need to define the dependency list rules (this goes above our rules, like last time).
+
+```makefile
+BIN_LIB=MYLIBRARY
+DBGVIEW=*ALL
+
+all: apipkg.srvpgm webcalls.srvpgm tools.bnddir
+
+apipkg.srvpgm: apipkg.rpgle
+webcalls.srvpgm: webcalls.rpgle othermod.rpgle
+
+tools.bnddir: apipkg.entry webcalls.entry
+```
+
+### Executing GNU Make
+
+Next, if you run `gmake -n` you can see what commands make would execute:
+
+```
+barry$ make -n
+
+system "CRTRPGMOD MODULE(MYLIBRARY/apipkg) SRCSTMF('./src/apipkg.rpgle') DBGVIEW(*ALL) REPLACE(*YES)"
+system -q "CRTSRCPF FILE(MYLIBRARY/QSRC) RCDLEN(112)"
+system "CPYFRMSTMF FROMSTMF('./src/apipkg.binder') TOMBR('/QSYS.lib/MYLIBRARY.lib/QSRC.file/apipkg.mbr') MBROPT(*replace)"
+system "CRTSRVPGM PGM(MYLIBRARY/apipkg) MODULE(MYLIBRARY/apipkg) SRCFILE(MYLIBRARY/QSRC)"
+system "CRTRPGMOD MODULE(MYLIBRARY/webcalls) SRCSTMF('./src/webcalls.rpgle') DBGVIEW(*ALL) REPLACE(*YES)"
+system "CRTRPGMOD MODULE(MYLIBRARY/othermod) SRCSTMF('./src/othermod.rpgle') DBGVIEW(*ALL) REPLACE(*YES)"
+system -q "CRTSRCPF FILE(MYLIBRARY/QSRC) RCDLEN(112)"
+system "CPYFRMSTMF FROMSTMF('./src/webcalls.binder') TOMBR('/QSYS.lib/MYLIBRARY.lib/QSRC.file/webcalls.mbr') MBROPT(*replace)"
+system "CRTSRVPGM PGM(MYLIBRARY/webcalls) MODULE(MYLIBRARY/webcalls MYLIBRARY/othermod) SRCFILE(MYLIBRARY/QSRC)"
+echo ""
+echo ""
+system -q "CRTBNDDIR BNDDIR(MYLIBRARY/tools)"
+system -q "ADDBNDDIRE BNDDIR(MYLIBRARY/tools) OBJ((*LIBL/apipkg *SRVPGM *IMMED) (*LIBL/webcalls *SRVPGM *IMMED))"
+```
+
+As you can see, it doesn’t really do anything with the .entry rule, because really we just need the values for the .bnddir rule.
