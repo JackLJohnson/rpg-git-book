@@ -119,7 +119,7 @@ Rational Developer for i (RDi) does have an IFS Browser where you can edit and c
 
 ![](./images/rdi.png)
 
-Of course, from RDi, you can only compile sources from the IFS that have support for the SRCSTMF parameter. In RDi, like usual, you can setup your library list for the job that the source will compile under.
+Of course, from RDi, you can only compile sources from the IFS that have support for the `SRCSTMF` parameter. In RDi, like usual, you can setup your library list for the job that the source will compile under.
 
 ### ILEditor
 
@@ -127,7 +127,7 @@ ILEditor supports editing and compiling sources from the IFS. ILEditor is curren
 
 ![](./images/ileditor.png)
 
-Like RDi, you can only compile sources from the IFS that have support for the SRCSTMF parameter. You can also setup the library list in the editor in the job settings window.
+Like RDi, you can only compile sources from the IFS that have support for the `SRCSTMF` parameter. You can also setup the library list in the editor in the job settings window.
 
 ### VSCode + SSH FS extension
 
