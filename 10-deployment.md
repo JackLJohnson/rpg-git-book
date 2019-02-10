@@ -8,7 +8,7 @@ If you are not using any change management and you already have your own deploym
 
 It's totally normal for all objects to be rebuilt when a release is made. For example, if you were ready to deploy your app you would simply rebuild your latest changes into your production library. Or if you want to deploy onto a different system, you'd have to SSH into that system, pull down the repository of the application and rebuild that.
 
-If you are correctly using `CREATE OR REPLACE` for your database objects, then there shouldn't be any data loss either. Make sure you use `REPLACE(*YES)` where possible though.
+If you are correctly using `CREATE OR REPLACE` for your database objects, then there shouldn't be any data loss either. Make sure you use `REPLACE(*YES)` where possible too.
 
 ```
 git pull
