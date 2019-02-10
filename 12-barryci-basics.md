@@ -2,6 +2,8 @@
 
 This chapter will cover the installation and setup of barryCI on a development server. barryCI can be used to keep master libraries up to date automatically or to deploy to test/production environments. barryCI is tightly integrated with GitHub, so will show you the process using repositories hosted on GitHub.
 
+If you are using barryCI correctly, then developers (or admins) wouldn't have to worry about keeping the master libraries up to date. You can also setup barryCI to completely handle deployment for you.
+
 ## Installation
 
 barryCI is written for Node.js and therefore requires the Node.js runtime. To install Node.js on IBM i, you can use yum:
