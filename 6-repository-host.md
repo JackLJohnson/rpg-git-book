@@ -8,7 +8,7 @@ Before cloning any repositories, make sure you have your git configured with a n
 
 In the IBM i world, it's totally normal for people to host their code on-premise - maybe even across multiple servers. Storing multiple copies of source members across multiple libraries and systems can be dangerous as you could lose track of the latest versions. Automatically storing source in git is better because you can track different versions (and even for different systems using branching).
 
-When using git, hosting on-premise works and some businesses do it. But of course, there should only be on master copy (the main bare repository). If the system that is hosting that master repository goes down, where are your developers going to push that code? You also take the risk that one of your developers might delete the master repository (although you hopefully have your system authorties setup correctly, for this not to happen!).
+When using git, hosting on-premise works and some businesses do it. But of course, there should only be on master copy (the main bare repository). If the system that is hosting that master repository goes down, where are your developers going to push that code? You also take the risk that one of your developers might delete the master repository (although you hopefully have your system authorities setup correctly, for this not to happen!).
 
 ### Creating the bare repo
 

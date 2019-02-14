@@ -27,7 +27,7 @@ Every developer should be working out of their own cloned repository of the appl
 When a developer wants to make a change to a program, they would simply make the changes to the source as they would expect, but they would:
 
 * Build the new object into their developer library and not the master library
-* Make sure that their developer library is higher than the master library in the libary list when testing the application (so their changed objects are picked up first)
+* Make sure that their developer library is higher than the master library in the library list when testing the application (so their changed objects are picked up first)
 * Developers should not share 'developer libraries', they should each have their own.
 
 When they are happy with the changes, they should commit and push them up. If you do not have any CI/CD in place: 
