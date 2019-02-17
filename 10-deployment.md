@@ -15,6 +15,8 @@ git pull
 gmake BIN_LIB=PROD_LIB
 ```
 
+**Don't be scared** to rebuild entire applications, even if it is 400+ objects. IBM i combined with strong hardware means compiles happen fast. It's totally normal in other ecosystems (in the Linux world) to rebuild entire applications. Do not follow the stigma that rebulding applications is a bad thing, which is something that exists in the IBM i world.
+
 ## Save file deployment
 
 It is possible for your `makefile` to generate a save file of your master library to then deploy that with your own method. This method is also useful if you only provide savefiles to deployment/client systems.
