@@ -16,7 +16,7 @@ Next, you will need an SSH client to connect to your system.
    * Putty: https://www.putty.org/
    * Git for Windows comes with an SSH client: https://gitforwindows.org/
 
-When you have your SSH clients setup, you can use `ssh user@yoursystem` to connect to the pase environment.
+When you have your SSH clients setup, you can use `ssh user@yoursystem` to connect to the pase environment. If your user profile is longer than 8 chartacters long, you will be denied access.
 
 ## What is yum?
 
