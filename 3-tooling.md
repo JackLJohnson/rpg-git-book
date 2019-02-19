@@ -2,6 +2,22 @@
 
 This chapter is going to be about getting the tooling required for development in the IFS and to use the SSH shell correctly. This is needed because in order to use tools, like `git` and `gmake`, you should have a correctly setup system.
 
+## Using SSH
+
+To access any of the open-source tools like `git` and `yum`, you should SSH into your IBM i. To enable to SSH server on your IBM i, you can run the following commands:
+
+* `STRTCPSVR SERVER(*SSHD)` to start the server.
+* `ENDTCPSVR SERVER(*SSHD)` to end the server.
+
+Next, you will need an SSH client to connect to your system.
+
+* Mac OS will ship with an SSH client, which you can access via Terminal or another shell.
+* On Windows:
+   * Putty: https://www.putty.org/
+   * Git for Windows comes with an SSH client: https://gitforwindows.org/
+
+When you have your SSH clients setup, you can use `ssh user@yoursystem` to connect to the pase environment.
+
 ## What is yum?
 
 yum is a package manager which has been ported to IBM i. The intention behind yum was to replace the 5333OPS PTF group, which used to contain the open source tools such a `git`, `bash` and so on. With yum, you are now able to install those packages via the pase command line (and also Access Client Solutions).
