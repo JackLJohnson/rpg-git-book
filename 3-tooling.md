@@ -94,14 +94,14 @@ PATH=/QOpenSys/pkgs/bin:$PATH
 You can do it permanently by appending that line to your users `.profile`, which is executed when you launch an SSH session.
 
 ```
-PATH=/QOpenSys/pkgs/bin:$PATH >> $HOME/.profile
+echo PATH=/QOpenSys/pkgs/bin:$PATH >> $HOME/.profile
 ```
 
 You may also want to launch `bash` when you start your session, in which you can just change your `.profile` for.
 
 
 ```
-PATH=/QOpenSys/pkgs/bin:$PATH bash >> $HOME/.profile
+echo PATH=/QOpenSys/pkgs/bin:$PATH bash >> $HOME/.profile
 ```
 
 When you install packages, only one user needs to install it as the `/QOpenSys/pkgs` directory is shared by everyone.
