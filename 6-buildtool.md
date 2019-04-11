@@ -165,7 +165,7 @@ Let’s go ahead and create rules for creating the `.srvpgm` object, `.rpgle` mo
     @echo ""
 ```
 
-### Dependancy list
+### Dependency list
 
 Next, we need to define the dependency list rules (this goes above our rules, like last time).
 
@@ -205,9 +205,49 @@ system -q "ADDBNDDIRE BNDDIR(MYLIBRARY/tools) OBJ((*LIBL/apipkg *SRVPGM *IMMED) 
 
 As you can see, it doesn’t really do anything with the .entry rule, because really we just need the values for the .bnddir rule.
 
+### Truly only building changed source
+
+Up until this point we haven't looked at how GNU Make handles only building changed sources. GNU Make usually looks at the time stamp of objects created on the IFS, but since we aren't creating objects on the IFS, there is no way for GNU Make to know when they were last changed.
+
+What we need to do instead is **create temporary/empty files in the root of our application being built which would map to the QSYS objects that we create in our makefile**. We can do this with `touch`. `touch` will create or update the IFS objects timestamp with the current system time.
+
+When make checks to see if the rule needs to be built, it will compare the name with the existing IFS object. If it doesn't exist or is out of date it will rebuild and create the object - otherwise it'll be left alone.
+
+The following makefile indicates that:
+
+1. We need to build 3 objects (PGMS variable)
+2. `programc.srvpgm` depends on two other modules: `modulea.mod` and `moduleb.mod`
+3. Any `%.pgm` will use `CRTBNDRPG`
+4. Any `$.mod` will use `CRTRPGMOD`
+
+```makefile
+BIN_LIB=LIBRARY
+PGMS=programa.pgm programb.pgm programc.srvpgm
+
+all: $(PGMS)
+	@echo "done"
+
+programc.srvpgm: modulea.mod moduleb.mod
+	system "CRTSRVPGM SRVPGM($(BIN_LIB)/programc) MODULE($(patsubst %,$(BIN_LIB)/%,$(basename $^))) SRCFILE($(BIN_LIB)/QSRC)"
+	@touch $@
+
+%.pgm: src/%.rpgle
+	system "CRTBNDRPG PGM($(BIN_LIB)/$*) SRCSTMF('src/$@') REPLACE(*YES)"
+	@touch $@
+
+%.mod: src/%.rpgle
+	system "CRTRPGMOD MODULE($(BIN_LIB)/$*) SRCSTMF('src/$@') REPLACE(*YES)"
+	@touch $@
+
+clean:
+	rm -f *.pgm *.mod *.srvpgm
+```
+
+The above makefile is a good example of a makefile that will only rebuild QSYS objects when the source has changed. Effectively the only change you need to make is to add the `touch` command to all your rules, but would need testing.
+
 ## Building objects that have no source
 
-Objects like message files and data areas don't have source. This can be a true challange when replicating your environment on other systems. Sadly, there is nothing built into IBM i which allows you to create a data area or message file from source - but of course, you could use a CL to execute the command. That means, if you can use a CL to build them, you can use a `makefile` too!
+Objects like message files and data areas don't have source. This can be a true challenge when replicating your environment on other systems. Sadly, there is nothing built into IBM i which allows you to create a data area or message file from source - but of course, you could use a CL to execute the command. That means, if you can use a CL to build them, you can use a `makefile` too!
 
 In your `makefile`, you would hard-define the message files and data areas rules and then include them as a dependancy for what is needed. For example:
 
