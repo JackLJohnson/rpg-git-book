@@ -218,7 +218,9 @@ The following makefile indicates that:
 1. We need to build 3 objects (PGMS variable)
 2. `programc.srvpgm` depends on two other modules: `modulea.mod` and `moduleb.mod`
 3. Any `%.pgm` will use `CRTBNDRPG`
-4. Any `$.mod` will use `CRTRPGMOD`
+4. Any `%.mod` will use `CRTRPGMOD`
+5. `%.pgm` depends on the `src/%.rpgle` source, where `%` is the name of the object you're building (e.g. if you're building `programa.pgm`, it will check for `src/programa.rpgle`)
+6. `%.mod` depends on the `src/%.rpgle` (like above)
 
 ```makefile
 BIN_LIB=LIBRARY
@@ -249,7 +251,7 @@ The above makefile is a good example of a makefile that will only rebuild QSYS o
 
 Objects like message files and data areas don't have source. This can be a true challenge when replicating your environment on other systems. Sadly, there is nothing built into IBM i which allows you to create a data area or message file from source - but of course, you could use a CL to execute the command. That means, if you can use a CL to build them, you can use a `makefile` too!
 
-In your `makefile`, you would hard-define the message files and data areas rules and then include them as a dependancy for what is needed. For example:
+In your `makefile`, you would hard-define the message files and data areas rules and then include them as a dependency for what is needed. For example:
 
 ```makefile
 BIN_LIB=IUNIT
